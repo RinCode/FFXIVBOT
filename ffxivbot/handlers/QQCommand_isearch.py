@@ -3,15 +3,17 @@ from .QQUtils import *
 from ffxivbot.models import *
 import logging
 import random
-import logging
+import requests
 import traceback
-
+import os
+import json
 
 def QQCommand_isearch(*args, **kwargs):
     action_list = []
     receive = kwargs["receive"]
+    msg = ""
     try:
-        receive_msg = receive["message"].replace("/isearch", "", 1).strip()
+        receive_msg = receive["message"].replace("/isearch", "").strip()
         msg_list = receive_msg.split(" ")
         if len(msg_list) != 2:
             msg = "参数不足。\n用法：/isearch ja/zh/en/fr/de item"
@@ -20,25 +22,28 @@ def QQCommand_isearch(*args, **kwargs):
             name = msg_list[1]
             count = 0
             if language in ["ja", "zh", "en", "fr", "de"]:
-                with open("all-items.json", "r", encoding='utf-8') as f:
+                with open("handlers/all-items.json", "r", encoding='utf-8') as f:
                     items = json.loads(f.read())
-                msg = ""
                 for id in items:
-                    if name in items[id]["zh"]:
+                    if name in items[id][language]:
+                        url = "https://xivapi.com/Item?ids=" + str(id) + "&columns=ID,Name_*,Icon,Recipes,GameContentLinks"
+                        #icon = "https://xivapi.com/" + 
+                        icon=json.loads(requests.get(url).text)["Results"][0]["Icon"]
+                        msg += "[CQ:image,file=https://xivapi.com/" + icon + "]\n"
                         count += 1
                         tmp = ""
                         for l, n in items[id].items():
                             if l in ["ja", "zh", "en"]:
-                                tmp += "[" + l + ":" + n + "]"
-                        msg += tmp + "\n"
-                    if count == 5:
-                        msg += "检索结果超过5条，请提高精确度。"
+                                tmp += n + "\n"
+                    if count == 3:
+                        msg += "检索结果超过3条，请提高精确度。"
                         break
-                print(msg)
+                if count == 0:
+                    msg = "没有找到数据"
             else:
                 msg = "不可接受的语言。\n用法：/isearch ja/zh/en/fr/de item"
-    except:
-        msg = "未知错误"
+    except Exception as e:
+        msg = "Error: {}".format(type(e))
 
     reply_action = reply_message_action(receive, msg)
     action_list.append(reply_action)
