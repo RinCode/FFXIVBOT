@@ -7,6 +7,7 @@ import requests
 import traceback
 import os
 import json
+from urllib.parse import quote
 
 def QQCommand_isearch(*args, **kwargs):
     action_list = []
@@ -27,14 +28,14 @@ def QQCommand_isearch(*args, **kwargs):
                 for id in items:
                     if name in items[id][language]:
                         url = "https://xivapi.com/Item?ids=" + str(id) + "&columns=ID,Name_*,Icon,Recipes,GameContentLinks"
-                        #icon = "https://xivapi.com/" + 
                         icon=json.loads(requests.get(url).text)["Results"][0]["Icon"]
-                        msg += "[CQ:image,file=https://xivapi.com/" + icon + "]\n"
+                        msg += "[CQ:image,file=https://xivapi.com/" + icon + "]"
+                        msg += "https://ff14.huijiwiki.com/index.php?search=" + quote(items[id]["zh"],'utf-8') + "\n| "
                         count += 1
-                        tmp = ""
                         for l, n in items[id].items():
                             if l in ["ja", "zh", "en"]:
-                                tmp += n + "\n"
+                                msg += n + " | "
+                        msg += "\n"
                     if count == 3:
                         msg += "检索结果超过3条，请提高精确度。"
                         break
