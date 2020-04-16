@@ -30,8 +30,9 @@ def QQCommand_isearch(*args, **kwargs):
                         url = "https://xivapi.com/Item?ids=" + str(id) + "&columns=ID,Name_*,Icon,Recipes,GameContentLinks"
                         icon=json.loads(requests.get(url).text)["Results"][0]["Icon"]
                         msg += "[CQ:image,file=https://xivapi.com/" + icon + "]"
-                        msg += "https://ff14.huijiwiki.com/index.php?search=" + quote(items[id]["zh"],'utf-8') + "\n| "
+                        msg += "https://ff14.huijiwiki.com/index.php?search=" + quote(items[id]["zh"],'utf-8') + "\n"
                         count += 1
+                        msg += "id: " +str(id) +" | "
                         for l, n in items[id].items():
                             if l in ["ja", "zh", "en"]:
                                 msg += n + " | "

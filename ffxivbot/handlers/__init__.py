@@ -2,6 +2,7 @@ from .QQEventHandler import QQEventHandler
 from .QQGroupEventHandler import QQGroupEventHandler
 
 commands = {
+    "/price": "搜索最低成交价格（国际服日服）",
     "/isearch": "查询物品",
     "/say": "台词",
     "/cat": "云吸猫",
@@ -133,6 +134,7 @@ from .QQCommand_luck import QQCommand_luck
 from .QQCommand_abv import QQCommand_abv
 from .QQCommand_say import QQCommand_say
 from .QQCommand_isearch import QQCommand_isearch
+from .QQCommand_price import QQCommand_price
 
 from .arknights.QQCommand_akhr import QQCommand_akhr
 
